@@ -16,40 +16,38 @@ impl std::fmt::Display for DataObject {
 
 }
 
-trait FromColumns {
-    fn from_columns(columns: &Vec<&str>) -> DataObject;
-}
+impl TryFrom<&Vec<&str>> for DataObject {
 
-impl FromColumns for DataObject {
-    fn from_columns(columns: &Vec<&str>) -> DataObject {
+    type Error = String;
 
+    fn try_from(source: &Vec<&str>) -> Result<Self, Self::Error> {
         // assume that string-value is always last
 
         let classifier: String;
 
-        match columns.get(columns.len() - 1) {
+        match source.get(source.len() - 1) {
 
             Some(result) => classifier = result.to_string(),
-            None => panic!("Invalid input column for DataObject")
+            None => return Err("Invalid input column for DataObject".to_string())
 
         }
 
         let mut data = Vec::<f32>::new();
 
-        for i in 0..columns.len()-1 {
+        for i in 0..source.len()-1 {
 
-            match columns[i].parse::<f32>() {
+            match source[i].parse::<f32>() {
 
                 Ok(result) => data.push(result),
-                Err(error) => panic!("Fatal error while reading data: {}", error)
+                Err(error) => return Err(format!("Error while reading data: {}.", error))
 
             }
         }
 
-        DataObject { classifier, data }
+        Ok( DataObject {classifier, data} )
     }
-}
 
+}
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where P: AsRef<Path>, {
@@ -60,17 +58,21 @@ where P: AsRef<Path>, {
 fn load_data(filename: &str){
 
     if let Ok(lines) = read_lines(filename){
+        let mut i = 1;
         for line in lines {
             if let Ok(text) = line {
                 let columns: Vec<&str> = text.split(",").collect();
-                let data_object = DataObject::from_columns(&columns);
-                println!("{}", data_object );
+                match DataObject::try_from(&columns) {
+                    Ok(data_object) => println!("{}", data_object),
+                    Err(errmsg) => println!("Could not parse columns on line {}: {} into DataObject, because: {}", i, text, errmsg)
+                }
             }
+            i+=1;
         }
     }
 
 }
 
 fn main() {
-    load_data("../iris/iris/test.txt");
+    load_data("../iris/iris/train.txt");
 }
