@@ -8,16 +8,16 @@ struct DataObject {
     data: Vec<f32>
 }
 
-trait FromColumns {
-    fn from_columns(columns: &Vec<&str>) -> DataObject;
-}
-
 impl std::fmt::Display for DataObject {
 
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Data-Object: CLASS [{}], DATA: [{:?}]", self.classifier, self.data)
     }
 
+}
+
+trait FromColumns {
+    fn from_columns(columns: &Vec<&str>) -> DataObject;
 }
 
 impl FromColumns for DataObject {
