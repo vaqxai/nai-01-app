@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
-use std::fmt;
+use std::{fmt, env};
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::hash::Hasher;
@@ -202,7 +202,55 @@ fn assign_knn_class(a: &mut DataObject, data: &Vec<DataObject>, k: usize) {
 
 }
 
+fn test_from_file(path: &str, train_data: &Vec<DataObject>, k: usize){
+    let test_data = match load_data(path) {
+        Ok(data) => data,
+        Err(e) => panic!("Error! {}", e)
+    };
+
+    let total = test_data.len();x
+    println!("Test data length: {}", total);
+    let mut correct = 0;
+    let mut i = 1;
+
+    for mut dataobj in test_data {
+
+        let shouldbe = dataobj.classifier.to_string(); // copy the value
+
+        dataobj.classifier = "?".to_string(); // just to be sure the result is genuine
+
+        assign_knn_class(&mut dataobj, &train_data, k);
+
+        if shouldbe == dataobj.classifier {
+            println!("Guessed test data line {} ({}) correctly!", i, dataobj);
+            correct += 1;
+        }
+
+        i += 1;
+
+    }
+
+    println!("Guessed {} out of {} lines correctly. {}% accuracy.", correct, total, correct as f32/total as f32 * 100.0);
+
+}
+
 fn main() {
+
+    let args: Vec<String> = env::args().collect();
+
+    if (args.len() == 0) {
+        println!("KNN Rust Implementation");
+        println!("Please refer to the following help article:");
+        println!("Run this program with arguments to use it.");
+        println!("");
+        println!("By default, it will use iris train data, located in ../iris/iris/train.txt");
+        println!("If you specify one argument, it will be interpreted as test-data path.");
+        println!("E.g: nai-01-app.exe train.txt");
+        println!("");
+        println!("If you specify two arguments, they will be interpreted as train data + test data.");
+        println!("Keep in mind though, that both data-sets need to have the same amount of dimensions.");
+        println!("The data files should be formatted like this: x.x,y.y")
+    }
 
     let data = match load_data("../iris/iris/train.txt") {
         Ok(data) => data,
@@ -218,5 +266,7 @@ fn main() {
     assign_knn_class(&mut example_obj, &data, 3);
 
     println!("The assigned class of example_obj is: {}, should be: {}", example_obj.classifier, "Iris-setosa");
+
+    test_from_file("../iris/iris/test.txt", &data, 3);
 
 }
