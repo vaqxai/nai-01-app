@@ -234,6 +234,31 @@ fn test_from_file(path: &str, train_data: &Vec<DataObject>, k: usize){
 
 }
 
+fn user_dataobj_test(train_data_path: &str, args: &Vec<String>, mbnd: usize, ubnd: usize){
+
+    let mut columns = Vec::<&str>::new();
+    columns.extend(args[mbnd..ubnd].iter().map(String::as_str));
+    columns.push("?");
+
+    let mut dataobject = match DataObject::try_from(&columns) {
+        Ok(dataobject) => dataobject,
+        Err(e) => {
+            println!("Could not create a DataObject from the supplied argument vectors: {:?}, because: {}", columns, e);
+            return;
+        }
+    };
+
+    let data = match load_data(train_data_path) {
+        Ok(data) => data,
+        Err(e) => panic!("Error! {}", e)
+    };
+
+    assign_knn_class(&mut dataobject, &data, 3);
+
+    println!("Assigned a class to the following data: {}", dataobject);
+
+}
+
 fn main() {
 
     let args: Vec<String> = env::args().collect();
@@ -323,29 +348,15 @@ fn main() {
             return;
         }
 
-        let mut columns = Vec::<&str>::new();
-        columns.extend(args[2..6].iter().map(String::as_str));
-        columns.push("?");
-
-        let mut dataobject = match DataObject::try_from(&columns) {
-            Ok(dataobject) => dataobject,
-            Err(e) => {
-                println!("Could not create a DataObject from the supplied argument vectors: {:?}, because: {}", columns, e);
-                return;
-            }
-        };
-
-        let data = match load_data("iris/train.txt") {
-            Ok(data) => data,
-            Err(e) => panic!("Error! {}", e)
-        };
-
-        assign_knn_class(&mut dataobject, &data, 3);
-
-        println!("Assigned a class to the following data: {}", dataobject);
-
+        user_dataobj_test("iris/train.txt", &args, 2, 6);
+     
     }
 
+    if args.len() > 2 && args[1] == "specimen" {
+
+        user_dataobj_test(&args[2], &args, 3, args.len()); 
+
+    }
 
     let mut _example_obj = DataObject {
         id: 0,
