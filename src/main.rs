@@ -208,7 +208,7 @@ fn test_from_file(path: &str, train_data: &Vec<DataObject>, k: usize){
         Err(e) => panic!("Error! {}", e)
     };
 
-    let total = test_data.len();x
+    let total = test_data.len();
     println!("Test data length: {}", total);
     let mut correct = 0;
     let mut i = 1;
@@ -238,7 +238,7 @@ fn main() {
 
     let args: Vec<String> = env::args().collect();
 
-    if (args.len() == 0) {
+    if args.len() == 0 {
         println!("KNN Rust Implementation");
         println!("Please refer to the following help article:");
         println!("Run this program with arguments to use it.");
@@ -249,7 +249,7 @@ fn main() {
         println!("");
         println!("If you specify two arguments, they will be interpreted as train data + test data.");
         println!("Keep in mind though, that both data-sets need to have the same amount of dimensions.");
-        println!("The data files should be formatted like this: x.x,y.y,z.z,...,class-string")
+        println!("The data files should be formatted like this: x.x,y.y,z.z,...,class-string");
         println!("");
         println!("If you speicfy 'specimen' as the first arg, the rest will be assumed to be floating-point variables. the class will be assumed from the test data from the second-argument file, e.g.");
         println!("nai-01-app.exe specimen ../iris/iris/train.txt 4.7 3.2 1.6 0.2")
