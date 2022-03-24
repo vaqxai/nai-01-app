@@ -78,7 +78,7 @@ fn load_data(filename: &str) -> Result<Vec<DataObject>, io::Error> {
         let mut i = 1;
         for line in lines {
             if let Ok(text) = line {
-                let columns: Vec<&str> = text.split(",").collect();
+                let columns = text.split(",").collect();
                 match DataObject::try_from(&columns) {
                     Ok(mut data_object) => {
                         data_object.id = i; // assign based on line number
@@ -250,12 +250,17 @@ fn main() {
         println!("If you specify two arguments, they will be interpreted as train data + test data.");
         println!("Keep in mind though, that both data-sets need to have the same amount of dimensions.");
         println!("The data files should be formatted like this: x.x,y.y,z.z,...,class-string");
+        println!("E.g. nai-01-app.exe iris/train.txt iris/test.txt");
         println!("");
         println!("If you speicfy 'specimen' as the first arg, the rest will be assumed to be floating-point variables. the class will be assumed from the train data from the second-argument file, e.g.");
-        println!("nai-01-app.exe specimen ../iris/iris/train.txt 4.7 3.2 1.6 0.2")
+        println!("nai-01-app.exe specimen iris/train.txt 4.7 3.2 1.6 0.2");
+        println!("If you specify 'specimend' as the first arg, the rest will be assumed to be floating-point variables. the class will be assumed from the default train data.");
+        println!("nai-01-app.exe specimend 4.7 3.2 1.6 0.2");
     }
 
+    // test specified by user
     if args.len() == 2 {
+        println!("Test data file from user...");
 
         let test_data_path = match args.get(1) {
             Some(path) => path,
@@ -275,6 +280,69 @@ fn main() {
         test_from_file(test_data_path, &data, 3);
 
         return;
+
+    }
+
+    // train+test specified by user
+    if args.len() > 2 && args[1] != "specimen" && args[1] != "specimend" {
+        println!("Test+Train data file from user...");
+
+        let train_data_path = match args.get(1) {
+            Some(path) => path,
+            None => panic!("Error! Could not find data-path!")
+        };
+
+        if !Path::new(train_data_path).exists() {
+            println!("Train data file does not exist/path is incorrect: {}", train_data_path);
+            return;
+        }
+
+        let test_data_path = match args.get(2) {
+            Some(path) => path,
+            None => panic!("Error! Could not find data-path!")
+        };
+
+        if !Path::new(test_data_path).exists() {
+            println!("Test data file does not exist/path is incorrect: {}", test_data_path);
+            return;
+        }
+
+        let data = match load_data(train_data_path) {
+            Ok(data) => data,
+            Err(e) => panic!("Error! {}", e)
+        };
+
+        test_from_file(test_data_path, &data, 3);
+
+    }
+
+    if args.len() > 2 && args[1] == "specimend" {
+
+        if args.len() != 6 {
+            println!("Invalid amount of dimensions for test data object. Needed 4, supplied {}", args.len() - 2);
+            return;
+        }
+
+        let mut columns = Vec::<&str>::new();
+        columns.extend(args[2..6].iter().map(String::as_str));
+        columns.push("?");
+
+        let mut dataobject = match DataObject::try_from(&columns) {
+            Ok(dataobject) => dataobject,
+            Err(e) => {
+                println!("Could not create a DataObject from the supplied argument vectors: {:?}, because: {}", columns, e);
+                return;
+            }
+        };
+
+        let data = match load_data("iris/train.txt") {
+            Ok(data) => data,
+            Err(e) => panic!("Error! {}", e)
+        };
+
+        assign_knn_class(&mut dataobject, &data, 3);
+
+        println!("Assigned a class to the following data: {}", dataobject);
 
     }
 
