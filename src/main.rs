@@ -271,17 +271,17 @@ fn main() {
         println!("");
         println!("By default, it will use iris train data, located in iris/train.txt");
         println!("If you specify one argument, it will be interpreted as test-data path.");
-        println!("E.g: nai-01-app.exe train.txt");
+        println!("E.g: rustknn.exe train.txt");
         println!("");
         println!("If you specify two arguments, they will be interpreted as train data + test data.");
         println!("Keep in mind though, that both data-sets need to have the same amount of dimensions.");
         println!("The data files should be formatted like this: x.x,y.y,z.z,...,class-string");
-        println!("E.g. nai-01-app.exe iris/train.txt iris/test.txt");
+        println!("E.g. rustknn.exe iris/train.txt iris/test.txt");
         println!("");
         println!("If you speicfy 'specimen' as the first arg, the rest will be assumed to be floating-point variables. the class will be assumed from the train data from the second-argument file, e.g.");
-        println!("nai-01-app.exe specimen iris/train.txt 4.7 3.2 1.6 0.2");
+        println!("rustknn.exe specimen iris/train.txt 4.7 3.2 1.6 0.2");
         println!("If you specify 'specimend' as the first arg, the rest will be assumed to be floating-point variables. the class will be assumed from the default train data.");
-        println!("nai-01-app.exe specimend 4.7 3.2 1.6 0.2");
+        println!("rustknn.exe specimend 4.7 3.2 1.6 0.2");
         return;
     }
 

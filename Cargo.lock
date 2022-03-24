@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "nai-01-app"
-version = "0.1.0"
+name = "rustknn"
+version = "1.0.0"
