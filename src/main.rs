@@ -238,13 +238,7 @@ fn main() {
 
     let args: Vec<String> = env::args().collect();
 
-<<<<<<< HEAD
-    println!("{:?}", args);
-
     if args.len() == 1 {
-=======
-    if args.len() == 0 {
->>>>>>> d70d111384335a23ca7a1ce0159dbc8c85e70918
         println!("KNN Rust Implementation");
         println!("Please refer to the following help article:");
         println!("Run this program with arguments to use it.");
