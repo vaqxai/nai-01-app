@@ -208,7 +208,7 @@ fn test_from_file(path: &str, train_data: &Vec<DataObject>, k: usize){
         Err(e) => panic!("Error! {}", e)
     };
 
-    let total = test_data.len();x
+    let total = test_data.len();
     println!("Test data length: {}", total);
     let mut correct = 0;
     let mut i = 1;
@@ -238,35 +238,52 @@ fn main() {
 
     let args: Vec<String> = env::args().collect();
 
-    if (args.len() == 0) {
+    println!("{:?}", args);
+
+    if args.len() == 1 {
         println!("KNN Rust Implementation");
         println!("Please refer to the following help article:");
         println!("Run this program with arguments to use it.");
         println!("");
-        println!("By default, it will use iris train data, located in ../iris/iris/train.txt");
+        println!("By default, it will use iris train data, located in iris/train.txt");
         println!("If you specify one argument, it will be interpreted as test-data path.");
         println!("E.g: nai-01-app.exe train.txt");
         println!("");
         println!("If you specify two arguments, they will be interpreted as train data + test data.");
         println!("Keep in mind though, that both data-sets need to have the same amount of dimensions.");
-        println!("The data files should be formatted like this: x.x,y.y")
+        println!("The data files should be formatted like this: x.x,y.y");
+
+        return;
     }
 
-    let data = match load_data("../iris/iris/train.txt") {
-        Ok(data) => data,
-        Err(e) => panic!("Error! {}", e)
-    };
+    if args.len() == 2 {
 
-    let mut example_obj = DataObject {
+        let test_data_path = match args.get(1) {
+            Some(path) => path,
+            None => panic!("Error! Could not find data-path!")
+        };
+
+        if !Path::new(test_data_path).exists() {
+            println!("Test data file does not exist/path is incorrect: {}", test_data_path);
+            return;
+        }
+
+        let data = match load_data("iris/train.txt") {
+            Ok(data) => data,
+            Err(e) => panic!("Error! {}", e)
+        };
+
+        test_from_file(test_data_path, &data, 3);
+
+        return;
+
+    }
+
+
+    let mut _example_obj = DataObject {
         id: 0,
         classifier: "?".to_string(),
         data: vec![4.7,3.2,1.6,0.2],
     };
-
-    assign_knn_class(&mut example_obj, &data, 3);
-
-    println!("The assigned class of example_obj is: {}, should be: {}", example_obj.classifier, "Iris-setosa");
-
-    test_from_file("../iris/iris/test.txt", &data, 3);
 
 }
