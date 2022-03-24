@@ -5,6 +5,7 @@ use std::{fmt, env};
 use std::collections::HashMap;
 use std::hash::Hash;
 use std::hash::Hasher;
+use std::io::{stdin,stdout,Write};
 
 #[derive(PartialEq)]
 struct DataObject {
@@ -234,7 +235,7 @@ fn test_from_file(path: &str, train_data: &Vec<DataObject>, k: usize){
 
 }
 
-fn user_dataobj_test(train_data_path: &str, args: &Vec<String>, mbnd: usize, ubnd: usize){
+fn user_dataobj_test(train_data_path: &str, args: &Vec<String>, mbnd: usize, ubnd: usize, k: usize){
 
     let mut columns = Vec::<&str>::new();
     columns.extend(args[mbnd..ubnd].iter().map(String::as_str));
@@ -253,7 +254,7 @@ fn user_dataobj_test(train_data_path: &str, args: &Vec<String>, mbnd: usize, ubn
         Err(e) => panic!("Error! {}", e)
     };
 
-    assign_knn_class(&mut dataobject, &data, 3);
+    assign_knn_class(&mut dataobject, &data, k);
 
     println!("Assigned a class to the following data: {}", dataobject);
 
@@ -281,6 +282,31 @@ fn main() {
         println!("nai-01-app.exe specimen iris/train.txt 4.7 3.2 1.6 0.2");
         println!("If you specify 'specimend' as the first arg, the rest will be assumed to be floating-point variables. the class will be assumed from the default train data.");
         println!("nai-01-app.exe specimend 4.7 3.2 1.6 0.2");
+        return;
+    }
+
+    println!("To continue please specify the amount of neighbors for the calculations");
+    let mut s = String::new();
+    let _=stdout().flush();
+    stdin().read_line(&mut s).expect("Did not enter a correct string");
+    if let Some('\n')=s.chars().next_back() {
+        s.pop();
+    }
+    if let Some('\r')=s.chars().next_back() {
+        s.pop();
+    }
+    
+    let k = match str::parse::<usize>(&s) {
+        Ok(k) => k,
+        Err(e) => {
+            println!("You did not type a correct number. ({})", e);
+            return;
+        }
+    };
+
+    if k < 1 {
+        println!("The k-number cannot be less than 1");
+        return;
     }
 
     // test specified by user
@@ -302,7 +328,7 @@ fn main() {
             Err(e) => panic!("Error! {}", e)
         };
 
-        test_from_file(test_data_path, &data, 3);
+        test_from_file(test_data_path, &data, k);
 
         return;
 
@@ -337,7 +363,7 @@ fn main() {
             Err(e) => panic!("Error! {}", e)
         };
 
-        test_from_file(test_data_path, &data, 3);
+        test_from_file(test_data_path, &data, k);
 
     }
 
@@ -348,13 +374,13 @@ fn main() {
             return;
         }
 
-        user_dataobj_test("iris/train.txt", &args, 2, 6);
+        user_dataobj_test("iris/train.txt", &args, 2, 6, k);
      
     }
 
     if args.len() > 2 && args[1] == "specimen" {
 
-        user_dataobj_test(&args[2], &args, 3, args.len()); 
+        user_dataobj_test(&args[2], &args, 3, args.len(), k); 
 
     }
 
