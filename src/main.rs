@@ -238,9 +238,13 @@ fn main() {
 
     let args: Vec<String> = env::args().collect();
 
+<<<<<<< HEAD
     println!("{:?}", args);
 
     if args.len() == 1 {
+=======
+    if args.len() == 0 {
+>>>>>>> d70d111384335a23ca7a1ce0159dbc8c85e70918
         println!("KNN Rust Implementation");
         println!("Please refer to the following help article:");
         println!("Run this program with arguments to use it.");
@@ -251,9 +255,10 @@ fn main() {
         println!("");
         println!("If you specify two arguments, they will be interpreted as train data + test data.");
         println!("Keep in mind though, that both data-sets need to have the same amount of dimensions.");
-        println!("The data files should be formatted like this: x.x,y.y");
-
-        return;
+        println!("The data files should be formatted like this: x.x,y.y,z.z,...,class-string");
+        println!("");
+        println!("If you speicfy 'specimen' as the first arg, the rest will be assumed to be floating-point variables. the class will be assumed from the train data from the second-argument file, e.g.");
+        println!("nai-01-app.exe specimen ../iris/iris/train.txt 4.7 3.2 1.6 0.2")
     }
 
     if args.len() == 2 {
