@@ -251,7 +251,7 @@ fn main() {
         println!("Keep in mind though, that both data-sets need to have the same amount of dimensions.");
         println!("The data files should be formatted like this: x.x,y.y,z.z,...,class-string");
         println!("");
-        println!("If you speicfy 'specimen' as the first arg, the rest will be assumed to be floating-point variables. the class will be assumed from the test data from the second-argument file, e.g.");
+        println!("If you speicfy 'specimen' as the first arg, the rest will be assumed to be floating-point variables. the class will be assumed from the train data from the second-argument file, e.g.");
         println!("nai-01-app.exe specimen ../iris/iris/train.txt 4.7 3.2 1.6 0.2")
     }
 
