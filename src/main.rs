@@ -134,11 +134,12 @@ fn sort_by_dist<'a>(disttable: &mut HashMap<&'a DataObject, f32>, k: usize) -> V
 
     let mut res = Vec::new();
 
-    let mut min: f32 = -1.0;
-    let mut minobj: Option<&DataObject> = None;
-
     while res.len() < k {
     // find min
+	
+	    let mut min: f32 = -1.0;
+		let mut minobj: Option<&DataObject> = None;
+	
         for obj in disttable.iter() {
 
             if res.len() == k { return res }
@@ -157,13 +158,15 @@ fn sort_by_dist<'a>(disttable: &mut HashMap<&'a DataObject, f32>, k: usize) -> V
         match minobj {
             Some(x) => {
                 res.push(x);
+				println!("{} dist {}", x, min);
                 disttable.remove(x);
             },
             None => panic!("Not enough neighbors to find nearest 3")
         }
+		
 
     }
-
+	
     res
 
 }
